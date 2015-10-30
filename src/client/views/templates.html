@@ -1,0 +1,249 @@
+<template name="main">
+    <div class="container lang-{{ language }}">
+        <div class="main-content">
+            {{> Template.dynamic template=whichView}}
+
+            <hr>
+
+            {{> footer }}
+        </div>
+    </div>
+</template>
+
+<template name="startMenu">
+    <div class="main-menu">
+        <h4>{{_ "ui.welcome to dixit" }}</h4>
+
+        <hr>
+
+        <div class="button-container">
+            <button id="btn-join-game">{{_ "ui.join game" }}</button>
+            <button id="btn-new-game">{{_ "ui.new game" }}</button>
+        </div>
+
+    </div>
+</template>
+
+<template name="lobby">
+    <h4>{{_ "ui.waiting for players" }}</h4>
+
+    <div class="access-code">
+        {{_ "ui.access code" }}:
+        <span>{{ game.accessCode }}</span>
+    </div>
+
+    <div class="access-buttons">
+        <a class="access-button btn-toggle-qrcode" href="javascript:void(0);">
+            <i class="fa fa-qrcode"></i>
+        </a>
+        <!--<span class="access-button-separator"></span>-->
+    </div>
+
+    <div class="qrcode-container" style="display: none;">
+        <div id="qrcode" class="qrcode"></div>
+
+        <div id="access-link" class="access-link">
+            <a href="{{ accessLink }}">{{ accessLink }}</a>
+        </div>
+    </div>
+
+    <hr>
+
+    <ol class="lobby-player-list">
+        {{#each players }}
+        <li>
+            {{ name }}
+
+            <!--{{#if isCurrent }}-->
+                <!--<a href="#" class="btn-edit-player" data-player-id="{{ _id }}">-->
+                    <!--<i class="fa fa-pencil"></i>-->
+                <!--</a>-->
+            <!--{{else}}-->
+                <!--<a href="#" class="btn-remove-player" data-player-id="{{ _id }}">-->
+                    <!--<i class="fa fa-close"></i>-->
+                <!--</a>-->
+            <!--{{/if}}-->
+        </li>
+        {{/each}}
+    </ol>
+
+    <hr>
+
+    <div class="button-container">
+        <button class="btn-start">{{_ "ui.start game" }}</button>
+        <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    </div>
+</template>
+
+<template name="gameView">
+    <!--<h4 class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</h4>-->
+
+    <div class="status-container">
+        <!--<button class="btn-toggle-status">{{_ "ui.show hide" }}</button>-->
+
+        <div class="status-container-content">
+            {{#if player.isStoryteller}}
+            <div class="title">{{_ "ui.you are the storyteller" }}</div>
+            {{else}}
+            <div class="title">{{_ "ui.hear and choose" }}</div>
+            {{/if}}
+        </div>
+    </div>
+
+    {{> scores}}
+
+    <hr>
+
+    <div class="button-container">
+        <button class="btn-vote">{{_ "ui.start vote" }}</button>
+        <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    </div>
+</template>
+
+<template name="createGame">
+    <h4>
+        {{#if isLoading }}
+        <span class="spinner"></span>
+        {{else}}
+        {{_ "ui.welcome to dixit" }}
+        {{/if}}
+    </h4>
+
+    <hr>
+
+    <form id="create-game">
+        <div class="">
+            <input type="text" id="player-name" name="playerName" placeholder='{{_ "ui.enter your name" }}'>
+
+            <div class="button-container">
+                <input type="submit" value='{{_ "ui.create game" }}'>
+                <button class="btn-back">{{_ "ui.back" }}</button>
+            </div>
+        </div>
+    </form>
+</template>
+
+<template name="joinGame">
+    <h4>
+        {{#if isLoading }}
+            <span class="spinner"></span>
+        {{else}}
+            {{_ "ui.welcome to dixit" }}
+        {{/if}}
+    </h4>
+
+    <hr>
+
+    <form id="join-game">
+        <div>
+            <input autocorrect="off" autocapitalize="off" type="text" id="access-code" name="accessCode"
+                   placeholder='{{_ "ui.enter an access code" }}'>
+            <input type="text" id="player-name" name="playerName" placeholder='{{_ "ui.enter your name" }}'>
+            {{> flashMessages}}
+
+            <div class="button-container">
+                <input type="submit" value='{{_ "ui.join" }}'>
+                <button class="btn-back">{{_ "ui.back" }}</button>
+            </div>
+        </div>
+    </form>
+</template>
+
+<template name="footer">
+    {{#if languages }}
+    <div dir="ltr" class="languages">
+        <select class="language-select">
+            {{#each languages }}
+            <option value="{{code}}" {{selected}}>{{toCapitalCase languageDetails.name}}</option>
+            {{/each}}
+        </select>
+        <ul class="language-list">
+            {{#each languages }}
+            <li>
+                <a class="btn-set-language" href="#" data-language="{{code}}">{{toCapitalCase languageDetails.name}}</a>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+
+    <div class="footer">
+        {{{_ "ui.footer" }}}
+    </div>
+</template>
+
+<template name="indicators">
+    {{#each indicators}}
+    <div class="indicator indicator-{{index}}">{{index}}</div>
+    {{/each}}
+</template>
+
+<template name="voting">
+    {{#if player.isStoryteller}}
+        <div class="title">{{_ "ui.wait for everyone's vote" }}</div>
+    {{else}}
+        <div class="title">{{_ "ui.which one do you vote" }}</div>
+        {{#each options}}
+            {{#if index}}
+                <div class="vote-option" data-option="{{index}}">{{index}}</div>
+            {{/if}}
+        {{/each}}
+    {{/if}}
+</template>
+
+<template name="waitVoting">
+    <div class="title">{{_ "ui.wait for everyone's vote" }}</div>
+</template>
+
+<template name="yourCard">
+    <div class="title">{{_ "ui.which one is your card" }}</div>
+    {{#each cards}}
+        <div class="card-option" data-option="{{index}}">{{index}}</div>
+    {{/each}}
+</template>
+
+<template name="scores">
+    <h5>{{_ "ui.scores" }}</h5>
+    <ul class="ingame-player-list">
+        {{#each players }}
+        <li>
+            <div class="player-name">
+                {{ name }} <span class="score">{{ score }}pts</span>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+</template>
+
+<template name="votingResult">
+    {{#if allRight }}
+        <div class="title">{{_ "ui.all right" }}</div>
+        <div class="title">{{_ "ui.good luck next time" game.roundResult.storyteller.name }}</div>
+    {{/if}}
+    {{#if allWrong }}
+        <div class="title">{{_ "ui.all wrong" }}</div>
+        <div class="title">{{_ "ui.good luck next time" game.roundResult.storyteller.name }}</div>
+    {{/if}}
+    {{#if game.roundResult.correct }}
+        <div class="title">{{_ "ui.some right" correct }}</div>
+    {{/if}}
+    {{#if game.roundResult.voted }}
+        {{_ "ui.voted" }}
+        {{#each game.roundResult.voted }}
+            {{ name }} +{{ bonus}}pts <br/>
+        {{/each}}
+    {{/if}}
+
+    {{#if player.isStoryteller}}
+        <div class="title">{{_ "ui.you're the next storyteller" }}</div>
+        <button class="btn-next-round">{{_ "ui.next round" }}</button>
+    {{/if}}
+
+    {{> scores}}
+</template>
+
+<template name="truncation">
+    <div class="title">{{_ "ui.game truncated" }}</div>
+    <div class="title">{{_ "ui.bad selection" }}</div>
+    <button class="btn-restart">{{_ "ui.restart voting" }}</button>
+</template>

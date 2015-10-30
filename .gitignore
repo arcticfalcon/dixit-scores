@@ -41,3 +41,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# =========================
+# Project Files
+# =========================
+.idea
+src/settings/production.json
+src/settings/production2.json
+src/settings/dev.json

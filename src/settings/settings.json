@@ -1,0 +1,8 @@
+{
+    "public": {
+        "url": "http://localhost:3000/",
+        "persistent_session": {
+            "default_method": "persistent"
+        }
+    }
+}
